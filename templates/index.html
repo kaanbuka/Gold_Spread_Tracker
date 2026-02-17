@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Spread Tracker | Gram Altın vs AltınS1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #080808;
+            --surface: #0f0f0f;
+            --card: #141414;
+            --border: rgba(212, 175, 55, 0.2);
+            --gold: #d4af37;
+            --gold-dim: #a68b2a;
+            --gold-glow: rgba(212, 175, 55, 0.15);
+            --text: #e8e6e3;
+            --text-muted: #8a8885;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -20%, var(--gold-glow), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 100%, rgba(212, 175, 55, 0.05), transparent);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 540px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(212, 175, 55, 0.35);
+            box-shadow: 0 0 40px var(--gold-glow);
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .price-row:last-child {
+            border-bottom: none;
+        }
+
+        .price-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .price-label span {
+            font-size: 1.5rem;
+        }
+
+        .price-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--gold);
+        }
+
+        .spread-card {
+            text-align: center;
+            padding: 2rem;
+            border: 2px solid var(--border);
+        }
+
+        .spread-status {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .spread-status.premli {
+            background: rgba(220, 38, 38, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .spread-status.iskontolu {
+            background: rgba(22, 163, 74, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(22, 163, 74, 0.3);
+        }
+
+        .spread-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 500;
+            margin: 0.5rem 0;
+        }
+
+        .spread-value.positive {
+            color: #f87171;
+        }
+
+        .spread-value.negative {
+            color: #4ade80;
+        }
+
+        .spread-percent {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .timestamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .refresh-btn {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.95rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--gold);
+            padding: 0.5rem 1.25rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--gold-glow);
+            border-color: var(--gold);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #f87171;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 8px;
+            background: rgba(220, 38, 38, 0.08);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gold Spread Tracker</h1>
+            <p>BIST AltınS1 vs Serbest Piyasa Gram Altın Makası</p>
+        </div>
+
+        <div id="content">
+            <div class="card loading" id="loading">Piyasalar taranıyor</div>
+            <div id="data" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const fmt = (n) => new Intl.NumberFormat('tr-TR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(n);
+
+        async function fetchSpread() {
+            const loading = document.getElementById('loading');
+            const dataEl = document.getElementById('data');
+            loading.style.display = 'block';
+            loading.textContent = 'Piyasalar taranıyor';
+            dataEl.style.display = 'none';
+            dataEl.innerHTML = '';
+
+            try {
+                const res = await fetch('/api/spread');
+                const data = await res.json();
+                loading.style.display = 'none';
+
+                if (!data.ok) {
+                    dataEl.style.display = 'block';
+                    dataEl.innerHTML = `<div class="card error">${data.error || 'Veri alınamadı'}</div>`;
+                    return;
+                }
+
+                const isPahali = data.borsa_daha_pahali;
+                const spreadClass = data.spread_tl > 0 ? 'positive' : 'negative';
+
+                dataEl.innerHTML = `
+                    <div class="card fade-in">
+                        <div class="price-row">
+                            <div class="price-label"><span>🥇</span> Fiziki Gram Altın</div>
+                            <div class="price-value">${fmt(data.gram_price)} ₺</div>
+                        </div>
+                        <div class="price-row">
+                            <div class="price-label"><span>📜</span> AltınS1 (1 Adet)</div>
+                            <div class="price-value">${fmt(data.altins1_price)} ₺</div>
+                        </div>
+                        <div class="price-row">
+                            <div class="price-label"><span>⚖️</span> AltınS1 (1 Gram Karşılığı)</div>
+                            <div class="price-value">${fmt(data.altins1_gram_equivalent)} ₺</div>
+                        </div>
+                    </div>
+                    <div class="card spread-card fade-in">
+                        <div class="spread-status ${isPahali ? 'premli' : 'iskontolu'}">
+                            ${isPahali ? '🔴 Borsa daha PAHALI (Sertifika Primli)' : '🟢 Borsa daha UCUZ (Sertifika İskontolu)'}
+                        </div>
+                        <div class="spread-value ${spreadClass}">
+                            ${data.spread_tl > 0 ? '+' : ''}${fmt(data.spread_tl)} ₺
+                        </div>
+                        <div class="spread-percent">
+                            (${data.spread_tl > 0 ? '+' : ''}${data.spread_percentage.toFixed(2)}%)
+                        </div>
+                    </div>
+                    <div class="footer fade-in">
+                        <span class="timestamp">Son güncelleme: ${data.timestamp}</span>
+                        <button class="refresh-btn" onclick="fetchSpread()">Yenile</button>
+                    </div>
+                `;
+                dataEl.style.display = 'block';
+            } catch (err) {
+                loading.style.display = 'none';
+                dataEl.style.display = 'block';
+                dataEl.innerHTML = `<div class="card error">Bağlantı hatası: ${err.message}</div>`;
+            }
+        }
+
+        fetchSpread();
+        setInterval(fetchSpread, 60000);
+    </script>
+</body>
+</html>
