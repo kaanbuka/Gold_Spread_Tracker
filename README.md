@@ -69,6 +69,27 @@ ALTIN_PROJESI/
 | Gram Altın | [GenelPara API](https://api.genelpara.com/) |
 | AltınS1   | [borsa.net](https://www.borsa.net/hisse/altins1) |
 
+## GitHub'a Yükleme
+
+1. [GitHub](https://github.com/new) üzerinde yeni bir depo oluşturun (ör: `gold-spread-tracker` veya `ALTIN_PROJESI`)
+2. Oluşturduğunuz depo URL’ini alın (`https://github.com/KULLANICI_ADI/REPO_ADI.git`)
+3. Terminalde şu komutları çalıştırın:
+
+```bash
+cd /Users/kahansmacbook/Desktop/ALTIN_PROJESI
+
+git remote add origin https://github.com/KULLANICI_ADI/REPO_ADI.git
+git branch -M main
+git push -u origin main
+```
+
+`KULLANICI_ADI` ve `REPO_ADI` değerlerini kendi GitHub kullanıcı adınız ve depo adınız ile değiştirin. SSH kullanıyorsanız:
+
+```bash
+git remote add origin git@github.com:KULLANICI_ADI/REPO_ADI.git
+git push -u origin main
+```
+
 ## Lisans
 
 MIT
